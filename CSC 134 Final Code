@@ -1,0 +1,948 @@
+// CSC 143 Final Project
+#include <iostream>
+#include <string>
+#include <time.h>
+#include <stdlib.h>
+using namespace std;
+//✨✨✨✨✨༼ つ ◕_◕ ༽つ✨✨✨✨✨
+
+
+class Enemy 
+{
+    public:
+        // enemy stats
+    std::string creatureName;
+    int eCurHealth;
+    int eMaxHealth;
+    int eLoot;
+    int eDMG;
+    int eBaseDMG;
+};
+
+
+class PlayerClass
+{
+    public:
+    int classMaxMana;
+    int classSpeech;
+    int classSpellMult;
+    int classMaxHP;
+    int classMoney;
+    std::string className;
+};
+
+
+class Items
+{
+    public:
+    int shieldVal;
+    int DMG;
+    int critRate;
+    std::string weaponName;
+};
+
+
+int main()
+{
+
+
+    // class stats
+    PlayerClass classes[5];
+    
+    classes[1].className = "Warrior";
+    classes[1].classMaxMana = 0;
+    classes[1].classMaxHP = 15;
+    classes[1].classSpellMult = 1;
+    classes[1].classSpeech = 10;
+    classes[1].classMoney = 1;
+
+
+    classes[2].className = "Mage";
+    classes[2].classMaxMana = 5;
+    classes[2].classMaxHP = 8;
+    classes[2].classSpellMult = 2;
+    classes[2].classSpeech = 10;
+    classes[2].classMoney = 5;
+       
+    classes[3].className = "Normal Person";
+    classes[3].classMaxMana = 1;
+    classes[3].classMaxHP = 10;
+    classes[3].classSpellMult = 1;
+    classes[3].classSpeech = 30;
+    classes[3].classMoney = 15;
+    
+    // error class
+    classes[4].className = "ERROR";
+    classes[4].classMoney = 1752444718;
+    classes[4].classMaxMana = 85;
+    classes[4].classMaxHP = 0;
+    classes[4].classSpellMult = 1234;
+    classes[4].classSpeech = 100;
+    
+    // enemy stats
+    Enemy creature[5];
+    
+    creature[0].creatureName = "Zombie";
+    creature[0].eCurHealth = 10;
+    creature[0].eMaxHealth = 10;
+    creature[0].eLoot = 3;
+    creature[0].eDMG = 3;
+    creature[0].eBaseDMG = 3;
+    
+    creature[1].creatureName = "Skelly Rat";
+    creature[1].eCurHealth = 4;
+    creature[1].eMaxHealth = 4;
+    creature[1].eLoot = 1;
+    creature[1].eDMG = 1;
+    creature[1].eBaseDMG = 1;
+    
+    creature[2].creatureName = "Living Shadow";
+    creature[2].eCurHealth = 15;
+    creature[2].eMaxHealth = 15;
+    creature[2].eLoot = 10;
+    creature[2].eDMG = 1;
+    creature[2].eBaseDMG = 1;
+    
+    creature[3].creatureName = "Hellhound";
+    creature[3].eCurHealth = 50;
+    creature[3].eMaxHealth = 50;
+    creature[3].eLoot = 30;
+    creature[3].eDMG = 7;
+    creature[3].eBaseDMG = 7;
+    
+    creature[4].creatureName = "High Demon Lord Elgrim";
+    creature[4].eCurHealth = 270;
+    creature[4].eMaxHealth = 270;
+    creature[4].eLoot = 50000;
+    creature[4].eDMG = 1;
+    creature[4].eBaseDMG = 1;
+    
+    // weapon & shield stats
+    Items weapons[5];
+    weapons[1].weaponName = "Broadsword";
+    weapons[1].DMG = 5;
+    
+    weapons[2].weaponName = "Wooden Staff";
+    weapons[2].DMG = 3;
+    
+    weapons[3].weaponName = "Stick";
+    weapons[3].DMG = 1;    
+    
+    weapons[4].weaponName = "Gilded Broadsword";
+    weapons[4].DMG = 30; 
+    weapons[4].critRate = 30;
+    
+    Items shields[5];
+    shields[1].weaponName = "Steel Shield";
+    shields[1].shieldVal = 3;
+    
+    shields[2].weaponName = "Flimsy Shield";
+    shields[2].shieldVal = 2;
+    
+    shields[3].weaponName = "Cover your face";
+    shields[3].shieldVal = 1;    
+    
+    // control which creature is fought
+    int creNum = 0;
+    
+    // controls which attack enemies use
+    int atkPattern = 0;
+    // random seed
+    srand(time(NULL));
+    
+    std::string playerName = "Default Name";
+
+
+    // choices in combat menu
+    int playerInput = -1;
+    
+    bool shield = false;
+    // keeps game running
+    bool game = true;
+    // holds various stats that change in combat
+    int temp;
+    // is in combat?
+    bool inCombat = false;
+    // for selecting class
+    int chosenClass = -1;
+    // is play in shop 1?
+    int inShop1 = false;
+    
+    // game intro / start
+    std::cout<<"Traveler, what is your name? : ";
+    std::cin>>playerName;
+    std::cout<<"Ah, greetings " << playerName <<"! What kind of hero are you?\n";
+    std::cout<<"Warrior(1) - Mage(2) - Nobody(3) \n(1-3): ";
+    std::cin>>chosenClass;
+    // if class is not right, change it to the error class.
+    if (chosenClass < 1 or chosenClass > 4)
+        {//chosenClass=4;
+        }
+    cout<<"\nAh, "<<playerName<<" the "<< classes[chosenClass].className<<"! It is your sacred duty to defeat the evil High Demon Lord Elgrim! He lurks in his temple in the shadowy woods";
+    cout<<"\nYou wake up in a clearing.";
+    
+    // set all base stats to class stats
+    int maxHP = classes[chosenClass].classMaxHP;
+    int currentHP = maxHP;
+    
+    int maxMana = classes[chosenClass].classMaxMana;
+    int currentMana = maxMana;
+    
+    int playerDamage = weapons[chosenClass].DMG;
+    int shieldVal = shields[chosenClass].shieldVal;
+    int spellMult = classes[chosenClass].classSpellMult;
+
+
+    int speech = classes[chosenClass].classSpeech;
+    int money = classes[chosenClass].classMoney;
+    
+    // quest stats, 
+    int flashlight = 0;
+    bool shadowDead = false;
+    int mineKills = 0;
+    
+    // have visted areas?
+    bool visted1=false;
+    bool visted2=false;
+    bool visted3=false;
+    
+    
+    // set the starting area
+    int area = 1;
+    // THE GAME
+    while (game == true) 
+     {   
+        // the forest town 
+        while (area == 1)
+            {
+                std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<playerName<< "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]" << " Electrum: ["<<money<<"]";
+                std::cout<<"\nYou come upon a lovely quaint town";
+                if (visted1 == false and flashlight == 0)
+                    {
+                        std::cout<<"\n[Townsfolk]: Oh kind " << classes[chosenClass].className<< ", please help us! Our mines are overrun with at least 4 undead!\nIf you can help, your generousity will be rewared brightly!";
+                    } else if (visted1==true and flashlight == 0)
+                        {
+                            std::cout<<"\n[Townsfolk]: Have you cleared out the mines yet friend?";    
+                        }
+                // give player flashlight once      
+                if (mineKills > 3 and flashlight == 0)
+                    {
+                        std::cout<<"\nOh, you have!! What joy. As promised, here is a 12,000 lumen Nitecore TM12K CREE XHP50 LED Rechargeable Flashlight!\nWe are eternally grateful dear friend!";
+                        cout<<"\nThe sight of the 12,000 lumen Nitecore TM12K CREE XHP50 LED Rechargeable Flashlight fills you with determination";
+                        flashlight=1;
+                    }
+                std::cout<<"\nYou can see: Abandoned Mines(1) - The Crafty Lizard(2) - Dark Forest(3) - Cozy Inn(4)";
+                std::cout <<"\nWhere will you go? (1-4): ";
+                std::cin>>playerInput;
+                visted1=true;
+                switch(playerInput)
+                {
+                case 1:
+                   // combat in mines
+                   if (flashlight == 0)
+                   {
+                    std::cout<<"You head to the spooky abandoned mines!\nUh oh, looks like trouble!";
+                    //reset the creature's hp, dmg and atk pattern
+                    creature[creNum].eCurHealth = creature[creNum].eMaxHealth;
+                    creature[creNum].eDMG = creature[creNum].eBaseDMG;
+                    atkPattern = 0;
+                    //set creature
+                    creNum = rand()%2;
+                   
+                   // start of combat
+                    inCombat=true;
+                    // loop during combat
+                    while (inCombat == true)
+                    {
+                        // reset shield
+                        shield=false;
+                        // print combat menu
+                        std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" << creature[creNum].creatureName << " | HP: [" << creature[creNum].eCurHealth << "/" << creature[creNum].eMaxHealth << "]";
+                        std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<< playerName << "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]";
+                        std::cout<<"\nAttack(1) - Shield(2) - Magic(3) - Talk(4)";
+                        
+                        
+                        // get player choices and react accordingly
+                        std::cout<<"\nWhat does "<< playerName <<" do? (1-4): ";
+                        std::cin>>playerInput;
+                        
+                        switch(playerInput)
+                        {
+                
+                        case 1:
+                        // attack
+                            std::cout<<"You attack the "<< creature[creNum].creatureName << " with your " << weapons[chosenClass].weaponName << " for " << playerDamage << " damage!";
+                            creature[creNum].eCurHealth -= playerDamage;
+                        break;
+                        
+                        case 2:
+                        // shield   
+                            std::cout<<playerName<<" guards!";
+                            shield = true;
+                        break;
+                        
+                        case 3:
+                        // cast spells
+                            std::cout<<"~~~~~~~~~~~\n"<<"Spells: \n Firebolt(1) - Healing Word(2)\n What will you cast? : ";
+                            std::cin>>playerInput;
+                            // check if player has mana
+                            if (currentMana > 0 and playerInput == 1)
+                            {
+                                // roll spell damage
+                                temp = rand()%4+1;
+                                // deal damage to enemy based on rolled number times spell multiplier
+                                std::cout<<"You attack the "<< creature[creNum].creatureName << " with Firebolt for " << temp*spellMult << " damage!";
+                                creature[creNum].eCurHealth -= temp * spellMult;
+                                currentMana--;
+                            }else if (currentMana > 0 and playerInput == 2)
+                                {
+                                    // roll gained health
+                                    temp = rand()%3+1;
+                                    // heal health based on rolled number times spell multiplier
+                                    std::cout<<"You cast Healing Word and regained " << temp*spellMult << " HP!";
+                                    currentHP += temp*spellMult;
+                                    currentMana--;
+                                    // prevent going over max HP
+                                    if (currentHP > maxHP)
+                                    {
+                                        currentHP = maxHP;    
+                                    }
+                                }else 
+                                    {
+                                        // if player has no mana or does something wrong
+                                        std::cout<<" You don't have enough mana to do that...";
+                                    }
+                        break;
+                        
+                        case 4:
+                        // talk
+                            std::cout<< playerName <<" talks to the " << creature[creNum].creatureName << "... Cool, I guess...";
+                            // % chance to succed based on speech skill
+                            temp = rand()%99+1;
+                            if (temp <= speech)
+                            {
+                                std::cout<<"\nSomehow talking won this battle...";
+                                // tick up mine quest stat
+                                mineKills++;
+                                inCombat = false;
+                            }
+                        break;
+                        
+                        default:
+                            std::cout<<"ERROR";
+                        break;
+                
+                        }
+                    
+                            
+                    // enemy's turn
+                    
+                    // check if enemy dies
+                    if (creature[creNum].eCurHealth <= 0)
+                    {
+                        std::cout<<"\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<<"You vanquished the " << creature[creNum].creatureName<<"!";
+                        std::cout<<"\nYou got " << creature[creNum].eLoot << " Electrum!";
+                        money+=creature[creNum].eLoot;
+                        // tick up mine quest stat
+                        mineKills++;
+                        inCombat = false;
+                    }
+        
+                    // pattern 0 (attack)
+                    if (atkPattern == 0)
+                    {
+                                        // enemy attacks (no shield)
+                        if (shield == false and creature[creNum].eCurHealth > 0 and inCombat == true)
+                        {  
+                            currentHP -= creature[creNum].eDMG;
+                            std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< creature[creNum].eDMG <<" damage!";
+                            // attack (player shields)
+                        } else if (shield == true and creature[creNum].eCurHealth > 0 and inCombat == true)
+                            {
+                                // temp holding the monster dmg value               
+                                temp = creature[creNum].eDMG - shieldVal;
+                                // removes negative numbers
+                                if (temp < 0){temp = 0;}
+                                // deal damage
+                                currentHP -= temp;    
+                                std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< temp <<" damage!";
+                            }
+                         // switch pattern 
+                         atkPattern = 1;       
+                    } else if (atkPattern == 1 and inCombat==true)
+                        {
+                            // do special move
+                            std::cout<<"\n"<<creature[creNum].creatureName<<" is building up its strength!";
+                            creature[creNum].eDMG ++;
+                            atkPattern = 0;
+                        }
+                    
+        
+                    // check if player died
+                    if (currentHP <= 0)
+                    {
+                        std::cout<<"\nXXXXXXXXXXXXXXXXXX\n"<<"| You have died. |\nXXXXXXXXXXXXXXXXXX";
+                        inCombat = false;
+                        // kill game
+                        exit(0);
+                    }    
+                }   // after mines are clear
+                   } else if (visted2 == false)
+                        {
+                            cout<<"Your 12,000 lumen Nitecore TM12K CREE XHP50 LED Rechargeable Flashlight illuminated 10 Electrum!";
+                            money+=10;
+                            visted2=true;
+                        } else {std::cout<<"The mines seem clear!";}
+                   
+                break;
+                
+                case 2:
+                    // items shop
+                    std::cout<<"\n~~~~~~~~~~~~~~~~~~~~~~~~~~~\nYou enter the Crafty Lizard, a nice store with a wisened old shopkeep who smiles as you walk in.";
+                    inShop1 = true;
+                    while (inShop1 == true)
+                    {
+                                std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<playerName<< "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]" << " Electrum: ["<<money<<"]";
+                                std::cout<<"\n[Shopkeep]: Here are my wares! \n Mana Star(1) - Healthy Crystal(2) - Book(3)\n[Shopkeep]: See anything you like? (1-3(4 to exit)): ";
+                                std::cin>>playerInput;
+                                switch(playerInput)
+                                {
+                                    case 1:
+                                        std::cout<<"[Shopkeep]:A star that fortifies your mana! \n5E, how about it? (1 for yes, 0 for no): ";
+                                        std::cin>>playerInput;
+                                        // check money
+                                        if (playerInput == 1 and money >= 5) 
+                                        {
+                                            std::cout<<"\n[Shopkeep]: Thank you kindly for your business!";
+                                            maxMana += 2;
+                                            currentMana+=2;
+                                            money-=5;
+                                        } else // no money or says no
+                                            {
+                                                std::cout<<"[Shopkeep]: ah, what a shame."; 
+                                            }
+                                    break;
+                                            
+                                    case 2:
+                                        std::cout<<"[Shopkeep]:A crystal that boosts your natural health! \n5E, how about it? (1 for yes, 0 for no): ";
+                                        std::cin>>playerInput;
+                                        // check for a yes and if you have enough money
+                                        if (playerInput == 1 and money >= 5) 
+                                        {
+                                            std::cout<<"\n[Shopkeep]: Thank you kindly for your business!";
+                                            maxHP += 5;
+                                            currentHP+=5;
+                                            money-=5;
+                                        } else 
+                                            { // says no / not enough money
+                                                std::cout<<"[Shopkeep]: ah, what a shame."; 
+                                            }
+                                    break;
+                                    
+                                    case 3:
+                                        std::cout<<"[Shopkeep]: You want my prized copy of 'How to Win Friends and Influence People'? \nSure I guess, 10E, how about it? (1 for yes, 0 for no): ";
+                                        std::cin>>playerInput;
+                                        // check for a yes and if you have enough money
+                                        if (playerInput == 1 and money >= 10) 
+                                        {
+                                            std::cout<<"\n[Shopkeep]: Thank you kindly for your business!";
+                                            speech += 15;
+                                            money-=10;
+                                        } else 
+                                            { // says no / not enough money
+                                                std::cout<<"[Shopkeep]: ah, what a shame."; 
+                                            } 
+                                    break;
+                                    
+                                    case 4:
+                                    // leave shop
+                                    std::cout<<"[Shopkeep]: Farewell!";
+                                    inShop1=false;
+                                    break;
+                                }
+                    }  
+                break;
+                
+                case 3:
+                    // dark forest 
+                    std::cout<<"You head into the dark and spooky forest, afraid of what wicked creatures may lurk within...";
+                    area = 2;
+                break;
+                
+                case 4:
+                    // vist inn
+                    cout<<"[Innkeeper]: Welcome! Would you like to rent a room? It's only 1E, a real steal if you ask me. (1 for yes, 0 for no): ";
+                    cin>>playerInput;
+                    if (playerInput == 1 and money >0)
+                        {
+                            cout<<"\nYou head to your room and take a long nap, awaking feeling well rested!";
+                            currentHP=maxHP;
+                            currentMana=maxMana;
+                            money--;
+                        } else // no money / says no
+                            {
+                                cout<<"\nNo worries, come again any time!";
+                            }
+                break;
+                }
+                
+        
+            }
+         
+        while (area == 2)
+            {
+                if (flashlight == 0)
+                    {
+                        std::cout<<"\nBy jove, it's far too dark to press on without some sort of very bright light to shine the way. \nI'll need to head back until I have something.";
+                        area = 1;
+                    }
+            // need flashlight for exploring this area
+            if (flashlight == 1)
+            {
+            std::cout<<"\nYour 12,000 lumen flashlight shines into the dark woods, and you trudge forth.";
+            
+            // start forest
+            std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" <<playerName<< "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]" << " Electrum: ["<<money<<"]";
+            std::cout<<"\nYou come upon a small clearing in the deep woods. You see a bright spot of light far off, as well as an ominous rustling sound.";
+            cout<<"\nPursue light(1) - Investigate rustling(2) - Go Back(3)\nWhat will you do? (1-3): ";
+            cin>>playerInput;
+            
+            visted2=true;
+            switch(playerInput)
+                {
+                    case 1:
+                    cout<<"You travel deep into the woods and start smelling smoke. There seems to be a massive fire buring up ahead.";
+                    cout<<"\nYou begin to hear a fierce growling like nothing you've hear before... \nGo back(1) - Press On(2)\nWhat do you do? (1-2): ";
+                    cin>>playerInput;
+                    if (playerInput == 2)
+                        {
+                            cout<<"Spooky";
+                            creNum=3;
+                            inCombat=true;
+                        } 
+                    break;
+                    
+                    case 2:
+                    if (shadowDead == false)
+                        {
+                            cout<<"You look around, and see a creature lurking. ";
+                            // set creature to living shadow
+                            creNum=2;
+                            inCombat=true;
+                            // start combat
+                            
+                            //
+                        } else 
+                            {
+                                cout<<"The fiend seems to be gone.";
+                            }
+                        break;
+                        
+                        case 3:
+                        area = 1;
+                        break;
+                    
+                    
+                }
+            
+            // forest combat
+            if (inCombat==true)
+            {
+            std::cout<<"\nUh oh, looks like trouble!";
+            //reset the creature's hp, dmg and atk pattern
+            creature[creNum].eCurHealth = creature[creNum].eMaxHealth;
+            creature[creNum].eDMG = creature[creNum].eBaseDMG;
+            atkPattern = 0;
+            
+            // loop during combat
+            while (inCombat == true)
+            {
+                // reset shield
+                shield=false;
+                // print combat menu
+                std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" << creature[creNum].creatureName << " | HP: [" << creature[creNum].eCurHealth << "/" << creature[creNum].eMaxHealth << "]";
+                std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<< playerName << "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]";
+                std::cout<<"\nAttack(1) - Shield(2) - Magic(3) - Talk(4)";
+                
+                
+                // get player choices and react accordingly
+                std::cout<<"\nWhat does "<< playerName <<" do? (1-4): ";
+                std::cin>>playerInput;
+                
+                switch(playerInput)
+                {
+        
+                case 1:
+                // attack
+                    std::cout<<"You attack the "<< creature[creNum].creatureName << " with your " << weapons[chosenClass].weaponName << " for " << playerDamage << " damage!";
+                    creature[creNum].eCurHealth -= playerDamage;
+                break;
+                
+                case 2:
+                // shield   
+                    std::cout<<playerName<<" guards!";
+                    shield = true;
+                break;
+                
+                case 3:
+                // cast spells
+                    std::cout<<"~~~~~~~~~~~\n"<<"Spells: \n Firebolt(1) - Healing Word(2)\n What will you cast? : ";
+                    std::cin>>playerInput;
+                    if (currentMana > 0 and playerInput == 1)
+                    {
+                        // roll spell damage
+                        temp = rand()%4+1;
+                        std::cout<<"You attack the "<< creature[creNum].creatureName << " with Firebolt for " << temp*spellMult << " damage!";
+                        // deal damage by random times spell multiplier
+                        creature[creNum].eCurHealth -= temp * spellMult;
+                        currentMana--;
+                    }else if (currentMana > 0 and playerInput == 2)
+                        {
+                            // roll gained health
+                            temp = rand()%3+1;
+                            std::cout<<"You cast Healing Word and regained " << temp*spellMult << " HP!";
+                            currentHP += temp*spellMult;
+                            currentMana--;
+                            if (currentHP > maxHP)
+                            {
+                                currentHP = maxHP;    
+                            }
+                        }else 
+                            {
+                                std::cout<<" You don't have enough mana to do that...";
+                            }
+                break;
+                
+                case 4:
+                // talk
+                    std::cout<< playerName <<" talks to the " << creature[creNum].creatureName << "... Cool, I guess...";
+                    // % chance to succed based on speech skill
+                    temp = rand()%99+1;
+                    if (temp <= speech)
+                    {
+                        std::cout<<"\nSomehow talking won this battle...";
+                        inCombat = false;
+                    if (creNum == 2)
+                        {
+                            shadowDead=true;
+                            cout<<"You see a glimmering jewel and an etherial amongst the disapated shadow...\nPick Up Jewel (1) -Pick Up Sword(2)\n(1-2): ";
+                            cin>>playerInput;
+                            if (playerInput == 1) {
+                                cout<<"You pick up the jewel and feel its power surge within you.";
+                                // upgrade spell damage and mana
+                                spellMult +=5;
+                                maxMana+=3;
+                                cout<<"The sword crumbles to ash in front of you.";
+                                } else 
+                                    {
+                                        // upgrade weapon
+                                        playerDamage+=30;
+                                        cout<<"The sword turns to pure energy and is absorbed into your weapon.\nThe jewel crumbles to ash in front of you.";
+                                    }
+                        }  else if (creNum == 3)
+                                {
+                                    cout<<"The flames have died down and you can see High Demon Lord Elgrim's temple. You know what you must do. No turning back now.";
+                                    area=3;    
+                                }
+                    }
+                break;
+                
+                default:
+                    std::cout<<"ERROR";
+                break;
+        
+                }
+            
+                    
+            // enemy's turn
+            
+            // check if enemy dies
+            if (creature[creNum].eCurHealth <= 0)
+                {
+                    std::cout<<"\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<<"You vanquished the " << creature[creNum].creatureName<<"!";
+                    std::cout<<"\nYou got " << creature[creNum].eLoot << " Electrum!";
+                    money+=creature[creNum].eLoot;
+                    inCombat = false;
+                    // shadow creature death
+                    if (creNum == 2)
+                        {
+                            shadowDead=true;
+                            cout<<"You see a glimmering jewel and an etherial sword amongst the disapated shadow...\nPick Up Jewel (1) -Pick Up Sword(2)\n(1-2): ";
+                            cin>>playerInput;
+                            if (playerInput == 1) {
+                                cout<<"You pick up the jewel and feel its power surge within you.";
+                                // upgrade spell damage and mana
+                                spellMult +=5;
+                                maxMana+=3;
+                                cout<<"The sword crumbles to ash in front of you.";
+                                } else // pick up sword
+                                    {
+                                        // upgrade weapon
+                                        playerDamage+=30;
+                                        cout<<"The sword turns to pure energy and is absorbed into your weapon.\nThe jewel crumbles to ash in front of you.";
+                                    }
+                        }  else if (creNum == 3)
+                                {
+                                    cout<<"The flames have died down and you can see High Demon Lord Elgrim's temple. You know what you must do. No turning back now.";
+                                    area=3;    
+                                }
+                }
+
+
+            // 
+            if (atkPattern == 0)
+                {
+                    
+                                // enemy attacks (no shield)
+                    if (shield == false and creature[creNum].eCurHealth > 0 and inCombat == true)
+                        {  
+                            currentHP -= creature[creNum].eDMG;
+                            std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< creature[creNum].eDMG <<" damage!";
+                            // attack (player shields)
+                        } else if (shield == true and creature[creNum].eCurHealth > 0 and inCombat == true)
+                            {
+                                // temp holding the monster dmg value               
+                                temp = creature[creNum].eDMG - shieldVal;
+                                // removes negative numbers
+                                if (temp < 0){temp = 0;}
+                                currentHP -= temp;    
+                                std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< temp <<" damage!";
+                            }
+                 // switch pattern 
+                 atkPattern = 1;       
+                } else if (atkPattern == 1 and inCombat==true and creNum==2)
+                    {
+                        // do shadow creature special move
+                        
+                        // set temp to random healing value
+                        temp = rand()%3+1;
+                        std::cout<<"\n"<<creature[creNum].creatureName<<" form flickers!";
+                        creature[creNum].eCurHealth += temp;
+                        creature[creNum].eDMG ++;
+                        if (creature[creNum].eCurHealth > creature[creNum].eMaxHealth)
+                            {
+                            creature[creNum].eCurHealth = creature[creNum].eMaxHealth;
+                            }
+                        atkPattern = 0;
+                    } else if (atkPattern == 1 and inCombat==true and creNum==3)
+                        {
+                        
+                            // hellhound special move
+                            temp = creature[creNum].eDMG / 2;
+                            creature[creNum].eDMG ++;
+                            currentHP -= temp;
+                            std::cout<<"\n The"<<creature[creNum].creatureName<<"'s eyes flare, and it lunges in for a quick bite!";
+                        }
+            
+
+
+            // check if player died
+            if (currentHP <= 0)
+                {
+                    std::cout<<"\nXXXXXXXXXXXXXXXXXX\n"<<"| You have died. |\nXXXXXXXXXXXXXXXXXX";
+                    inCombat = false;
+                    exit(0);
+                }    
+        
+           }
+                
+            }   
+             
+            }
+        }
+        // boss temple
+        while (area == 3)
+            {
+                cout<<"\nYou stand before the ancient temple with trepidation. \nTurn Back(1) - Rest(2) - Venture Inside(3)\n(1-3): ";
+                cin>>playerInput;
+                switch(playerInput)
+                    {
+                        case 1: // you can't leave
+                            cout<<"No going back.";
+                        break;
+                        
+                        case 2:
+                            if (visted3==false) // one time short rest
+                                {
+                                    cout<<"You take a short rest.";
+                                    currentHP += maxHP/2;
+                                    if (currentHP > maxHP) {currentHP=maxHP;}
+                                    currentMana += maxMana/2;
+                                    if (currentMana > maxMana) {currentMana=maxMana;}
+                                    visted3=true;
+                                } else {cout<<"No time to rest now.";}
+                        break;
+                        
+                        case 3:
+                            // boss battle time
+                            cout<<"You walk inside,";
+                            inCombat=true;
+                        break;
+                    }
+                    
+                // boss combat    
+                if (inCombat==true)
+                        {
+                        std::cout<<"\nUh oh, looks like trouble!";
+                        // set creature to Boss
+                        creNum=4;
+                        //reset the creature's hp, dmg and atk pattern
+                        creature[creNum].eCurHealth = creature[creNum].eMaxHealth;
+                        creature[creNum].eDMG = creature[creNum].eBaseDMG;
+                        atkPattern = 0;
+                        
+            
+                        // loop during combat
+                        while (inCombat == true)
+                        {
+                            // reset shield
+                            shield=false;
+                            // print combat menu
+                            std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n" << creature[creNum].creatureName << " | HP: [" << creature[creNum].eCurHealth << "/" << creature[creNum].eMaxHealth << "]";
+                            std::cout << "\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<< playerName << "'s HP: ["<< currentHP << "/" << maxHP << "] Mana: [" << currentMana << "/" << maxMana <<"]";
+                            std::cout<<"\nAttack(1) - Shield(2) - Magic(3) - Talk(4)";
+                            
+                            
+                            // get player choices and react accordingly
+                            std::cout<<"\nWhat does "<< playerName <<" do? (1-4): ";
+                            std::cin>>playerInput;
+                            
+                            switch(playerInput)
+                            {
+                    
+                            case 1:
+                            // attack
+                                std::cout<<"You attack the "<< creature[creNum].creatureName << " with your " << weapons[chosenClass].weaponName << " for " << playerDamage << " damage!";
+                                creature[creNum].eCurHealth -= playerDamage;
+                            break;
+                            
+                            case 2:
+                            // shield   
+                                std::cout<<playerName<<" guards!";
+                                shield = true;
+                            break;
+                            
+                            case 3:
+                            // cast spells
+                                std::cout<<"~~~~~~~~~~~\n"<<"Spells: \n Firebolt(1) - Healing Word(2)\n What will you cast? : ";
+                                std::cin>>playerInput;
+                                if (currentMana > 0 and playerInput == 1)
+                                {
+                                    // roll spell damage
+                                    temp = rand()%4+1;
+                                    std::cout<<"You attack the "<< creature[creNum].creatureName << " with Firebolt for " << temp*spellMult << " damage!";
+                                    creature[creNum].eCurHealth -= temp * spellMult;
+                                    currentMana--;
+                                }else if (currentMana > 0 and playerInput == 2)
+                                    {
+                                        // roll gained health
+                                        temp = rand()%3+1;
+                                        std::cout<<"You cast Healing Word and regained " << temp*spellMult << " HP!";
+                                        currentHP += temp*spellMult;
+                                        currentMana--;
+                                        if (currentHP > maxHP)
+                                        {
+                                            currentHP = maxHP;    
+                                        }
+                                    }else 
+                                        {
+                                            std::cout<<" You don't have enough mana to do that...";
+                                        }
+                            break;
+                            
+                            case 4:
+                            // talk
+                                std::cout<< playerName <<" talks to the " << creature[creNum].creatureName << "... Cool, I guess...";
+                                // % chance to succed based on speech skill
+                                temp = rand()%99+1;
+                                if (temp <= speech)
+                                {
+                                    std::cout<<"\nSomehow talking won this battle...";
+                                    inCombat = false;
+                                    cout<<playerName<<" the "<< classes[chosenClass].className <<" was truimphant in their quest to slay the vile Demon Elgrim!(Or rather gave him a strongly worded talking to that changed his mind about a few key bu)";
+                                    exit(0);
+                                }
+                            break;
+                            
+                            default:
+                                std::cout<<"ERROR";
+                            break;
+                    
+                            }
+                        
+                                
+                        // enemy's turn
+                        
+                        // check if enemy dies
+                        if (creature[creNum].eCurHealth <= 0)
+                        {
+                            std::cout<<"\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n"<<"You vanquished the " << creature[creNum].creatureName<<"!";
+                            std::cout<<"\nYou got " << creature[creNum].eLoot << " Electrum!";
+                            money+=creature[creNum].eLoot;
+                            inCombat = false;
+                            cout<<playerName<<" the "<< classes[chosenClass].className <<" was truimphant in their quest to slay the vile Demon Elgrim!";
+                            exit(0);
+                        }
+            
+                        //randomly pick an attack
+                        atkPattern=rand()%3;
+                        //
+                        if (atkPattern == 0)
+                            {
+                                
+                                            // enemy attacks (no shield)
+                                if (shield == false and creature[creNum].eCurHealth > 0 and inCombat == true)
+                                    {  
+                                        currentHP -= creature[creNum].eDMG;
+                                        std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< creature[creNum].eDMG <<" damage!";
+                                        // attack (player shields)
+                                    } else if (shield == true and creature[creNum].eCurHealth > 0 and inCombat == true)
+                                        {
+                                            // temp holding the monster dmg value               
+                                            temp = creature[creNum].eDMG - shieldVal;
+                                            // removes negative numbers
+                                            if (temp < 0){temp = 0;}
+                                            currentHP -= temp;    
+                                            std::cout<<"\n"<<creature[creNum].creatureName<<" attacks you for "<< temp <<" damage!";
+                                        }
+      
+                            } else if (atkPattern == 1 and inCombat==true)
+                                {
+                                    // do shadow creature special move
+                                    
+                                    // set temp to random healing value
+                                    temp = rand()%3+1;
+                                    std::cout<<"\n"<<creature[creNum].creatureName<<" form flickers!";
+                                    creature[creNum].eCurHealth += temp;
+                                    creature[creNum].eDMG ++;
+                                    if (creature[creNum].eCurHealth > creature[creNum].eMaxHealth)
+                                        {
+                                        creature[creNum].eCurHealth = creature[creNum].eMaxHealth;
+                                        }
+
+
+                                } else if (atkPattern == 2 and inCombat==true)
+                                    {
+                                    
+                                        // hellhound special move
+                                        temp = creature[creNum].eDMG / 2;
+                                        creature[creNum].eDMG ++;
+                                        currentHP -= temp;
+                                        std::cout<<"\n The"<<creature[creNum].creatureName<<"'s eyes flare, and it lunges in for a quick bite!";
+                                    }
+                        
+            
+                        // check if player died
+                        if (currentHP <= 0)
+                            {
+                                std::cout<<"\nXXXXXXXXXXXXXXXXXX\n"<<"| You have died. |\nXXXXXXXXXXXXXXXXXX";
+                                inCombat = false;
+                                exit(0);
+                            }    
+                            
+                       }
+                        
+                    }
+            }
+    }
+}
